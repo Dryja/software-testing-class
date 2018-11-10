@@ -9,6 +9,7 @@ import java.util.Set;
 @Data
 @Entity
 public class Recipe {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,14 +18,9 @@ public class Recipe {
     private Integer prepTime;
     private Integer cookTime;
     private Integer servings;
-    private String source;
-    private String url;
 
     @Lob
     private String directions;
-
-    @Enumerated(value = EnumType.STRING)
-    private Difficulty difficulty;
 
     @Lob
     private Byte[] image;

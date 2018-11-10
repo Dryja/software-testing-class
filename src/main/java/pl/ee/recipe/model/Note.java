@@ -9,6 +9,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(exclude = {"recipe"})
 @Entity
 public class Note {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
