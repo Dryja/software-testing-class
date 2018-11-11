@@ -48,20 +48,19 @@ public class CategoryRepositoryTest {
 
     @Test
     public void read() {
-        var emptyCategories = categoryRepository.findAll();
-        assertFalse(emptyCategories.iterator().hasNext());
 
-        entityManager.persist(Category.builder().description("test").build());
-        entityManager.persist(Category.builder().description("test2").build());
+        var id1 = entityManager.persist(Category.builder().description("test").build()).getId();
+        var id2 = entityManager.persist(Category.builder().description("test2").build()).getId();
         entityManager.persist(Category.builder().description("test3").build());
-        assertEquals(categoryRepository.count(), 3L);
+        assertTrue(categoryRepository.count() >= 3);
 
-        var category = categoryRepository.findById(1L).orElseThrow(RuntimeException::new);
-        assertEquals(Long.valueOf(1L), category.getId());
+        var categories = categoryRepository.findAll();
+        categories.forEach(category -> assertNotNull(category.getId()));
+
+        var category = categoryRepository.findById(id1).orElseThrow(RuntimeException::new);
+        assertEquals(id1, category.getId());
         assertEquals("test", category.getDescription());
-        var allCategories = categoryRepository.findAll();
-        assertEquals(3,allCategories.spliterator().estimateSize());
-        assertTrue(categoryRepository.existsById(2L));
+        assertTrue(categoryRepository.existsById(id2));
     }
 
     @Test
@@ -75,22 +74,23 @@ public class CategoryRepositoryTest {
 
     @Test
     public void delete() {
-        entityManager.persist(Category.builder().description("test").build());
-        entityManager.persist(Category.builder().description("test").build());
-        assertEquals(Long.valueOf(1L),entityManager.find(Category.class, 1L).getId());
-        assertEquals(Long.valueOf(2L),entityManager.find(Category.class, 2L).getId());
+        var id1 = entityManager.persist(Category.builder().description("test").build()).getId();
+        var id2 = entityManager.persist(Category.builder().description("test").build()).getId();
+        assertEquals(id1,entityManager.find(Category.class, id1).getId());
+        assertEquals(id2,entityManager.find(Category.class, id2).getId());
         categoryRepository.deleteAll();
-        assertNull(entityManager.find(Category.class, 1L));
-        assertNull(entityManager.find(Category.class, 2L));
+        assertNull(entityManager.find(Category.class, id1));
+        assertNull(entityManager.find(Category.class, id2));
 
-        entityManager.persist(Category.builder().description("test").build());
-        assertEquals(Long.valueOf(3L),entityManager.find(Category.class, 3L).getId());
-        categoryRepository.deleteById(3L);
-        assertNull(entityManager.find(Category.class, 3L));
+        var id3 = entityManager.persist(Category.builder().description("test").build()).getId();
+        assertEquals(id3,entityManager.find(Category.class, id3).getId());
+        categoryRepository.deleteById(id3);
+        assertNull(entityManager.find(Category.class, id3));
 
         var category = entityManager.persist(Category.builder().description("test").build());
-        assertEquals(Long.valueOf(4L),entityManager.find(Category.class, 4L).getId());
+        var id4 = category.getId();
+        assertEquals(id4,entityManager.find(Category.class, id4).getId());
         categoryRepository.delete(category);
-        assertNull(entityManager.find(Category.class, 4L));
+        assertNull(entityManager.find(Category.class, id4));
     }
 }
