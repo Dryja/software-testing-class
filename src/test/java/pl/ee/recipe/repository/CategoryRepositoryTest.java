@@ -8,8 +8,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.ee.recipe.model.Category;
 
-import javax.persistence.EntityNotFoundException;
-
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -26,24 +24,16 @@ public class CategoryRepositoryTest {
 
     @Test
     public void create() {
-        categoryRepository.save(Category.builder().id(1L).description("test").build());
-        var category = entityManager.find(Category.class, 1L);
-        if(category == null) {
-            throw new EntityNotFoundException();
-        }
-        assertEquals("test", category.getDescription());
+        var id1 = categoryRepository.save(Category.builder().description("test").build()).getId();
+        var categoryDesc = entityManager.find(Category.class, id1).getDescription();
+        assertEquals("test", categoryDesc);
         var categories = List.of(
           Category.builder().description("test2").build(),
           Category.builder().description("test3").build(),
           Category.builder().description("test3").build()
         );
 
-        categoryRepository.saveAll(categories);
-        var category2 = entityManager.find(Category.class, 4L);
-        if(category2 == null) {
-            throw new EntityNotFoundException();
-        }
-        assertEquals("test3" ,category2.getDescription());
+        categoryRepository.saveAll(categories).forEach(category -> assertNotNull(category.getId()));
     }
 
     @Test
