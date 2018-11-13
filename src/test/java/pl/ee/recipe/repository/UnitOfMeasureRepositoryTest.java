@@ -26,11 +26,10 @@ public class UnitOfMeasureRepositoryTest {
         unitOfMeasure.setDescription("pint");
 
         UnitOfMeasure unitOfMeasureSaved =  unitOfMeasureRepository.save(unitOfMeasure);
-        Iterable<UnitOfMeasure> unitOfMeasures = unitOfMeasureRepository.findAll();
 
         assertEquals(Long.valueOf(3L), unitOfMeasureSaved.getId());
         assertEquals("pint", unitOfMeasureSaved.getDescription());
-        assertEquals(3, ((Collection<?>) unitOfMeasures).size());
+        assertEquals(3, unitOfMeasureRepository.count());
         assertTrue(unitOfMeasureRepository.existsById(3L));
     }
 
@@ -50,11 +49,10 @@ public class UnitOfMeasureRepositoryTest {
         unitOfMeasure.setDescription("pint");
 
         UnitOfMeasure unitOfMeasureUpdated = unitOfMeasureRepository.save(unitOfMeasure);
-        Iterable<UnitOfMeasure> unitOfMeasures = unitOfMeasureRepository.findAll();
 
         assertEquals(Long.valueOf(1L), unitOfMeasureUpdated.getId());
         assertEquals("pint", unitOfMeasureUpdated.getDescription());
-        assertEquals(2, ((Collection<?>) unitOfMeasures).size());
+        assertEquals(2, unitOfMeasureRepository.count());
         assertTrue(unitOfMeasureRepository.existsById(1L));
     }
 
@@ -64,10 +62,12 @@ public class UnitOfMeasureRepositoryTest {
         unitOfMeasure.setId(1L);
         unitOfMeasure.setDescription("cup");
 
-        unitOfMeasureRepository.delete(unitOfMeasure);
-        Iterable<UnitOfMeasure> unitOfMeasures = unitOfMeasureRepository.findAll();
+        assertEquals(2, unitOfMeasureRepository.count());
+        assertTrue(unitOfMeasureRepository.existsById(1L));
 
-        assertEquals(1, ((Collection<?>) unitOfMeasures).size());
+        unitOfMeasureRepository.delete(unitOfMeasure);
+
+        assertEquals(1, unitOfMeasureRepository.count());
         assertFalse(unitOfMeasureRepository.existsById(1L));
     }
 }
